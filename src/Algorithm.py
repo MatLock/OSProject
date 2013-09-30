@@ -67,7 +67,12 @@ def main():
     pfifo.add(h)
     pfifo.add(j)
     pfifo.add(p)
-    pfifo.start()
+    """pfifo.start()"""
+    q = SortedQueue()
+    q.insertion(x,q.myList)
+    q.insertion(y,q.myList)
+    print q.get().getIdentifier()
+    print q.get().getIdentifier()
 
 if __name__ == '__main__':
 

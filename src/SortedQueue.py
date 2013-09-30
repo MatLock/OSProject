@@ -52,27 +52,36 @@ class SortedQueue():
         finally:
             self.condition_var.release()
             
-            
-"""         
 
- PREGUNTAR COMO UTILIZAR LA RECURSION EN PYTHON..
- CASO BASE SE EJECUTA PERO EL RECURSIVO NO...
+ ## WITH RECURSION !
     def cons(self,anObject,aList):
         aList.insert(0,anObject)
+        return aList
             
     def head(self,aList):
         return aList[0]
     
     def tail(self,aList):
         aList.pop()
-        
+        return aList
+    
+    
+    # Another way of putting an Object    
     def insertion(self,anObject, aList):
-        if (len(aList) == 0):
-            aList.append(anObject) 
-        else:
-            if(anObject < aList[0]):
-                self.cons(anObject, aList)
+        try:
+            self.condition_var.acquire()    
+            # Base case !!
+            if (len(aList) == 0):
+                aList.append(anObject) 
+                return aList
+            # Recursive case!! 
             else:
-                x = self.head(aList)
-                self.cons(x,(self.insertion(anObject,self.tail(aList))))
-  """   
+                if(anObject < aList[0]):
+                    self.cons(anObject, aList)
+                    return aList
+                else:
+                    x = self.head(aList)
+                    return self.cons(x,(self.insertion(anObject,self.tail(aList))))
+        finally:
+            self.condition_var.notifyAll()
+            self.condition_var.release()
