@@ -5,6 +5,32 @@ Created on 29/09/2013
 '''
 
 import threading
+from Kernel import *
+from Queue import Queue
+import time
+
+class IOQueue():
+    
+    def __init__(self,kernel):
+        threading.Thread.__init__(self)
+        self.queue = Queue()
+        self.kernel = kernel
+        
+    def add(self,program):
+        self.queue.put(program)
+        
+    def pop(self):
+        program = self.queue.pop()
+        program.pc += 1
+        print program.id + "  Executing a I/O instruction.."
+        self.kernel.execute(program)
+        
+    def run(self):
+        while (True):
+            io_semaphore.acquire()
+            time.sleep(5)
+            self.queue.pop()
+    
 
 
 
@@ -53,7 +79,7 @@ class SortedQueue():
             self.condition_var.release()
             
 
- ## WITH RECURSION !
+# WITH RECURSION !
     def cons(self,anObject,aList):
         aList.insert(0,anObject)
         return aList
