@@ -21,7 +21,7 @@ class FIFO():
         return self.queue.get()
     
     def isEmpty(self):
-        return len(self.queue) == 0
+        return self.queue.empty()
             
 class PFIFO():
     

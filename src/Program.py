@@ -6,11 +6,11 @@ Created on 23/09/2013
 
 class Program():
 
-    def __init__(self, num, identifier, size, boolean, pc):
+    def __init__(self, num, identifier, boolean):
         self.priority = num
         self.id = identifier
         self.pc = 0
-        self.size = size
+        self.size = 0
         self.isAPriority = boolean
         self.instructions = []
 
@@ -28,9 +28,13 @@ class Program():
     
     def addInstruction(self, anInstruction):
         self.instructions.append(anInstruction)
+        self.size = self.size + 1
 
     def getInstruction(self,index):
-        return self.instruction[index]
+        return self.instructions[index]
     
-    def nextInstruction(self):
-        return self.instructions[self.pc + 1]
+    def setIndex(self,index):
+        self.pc = index
+        
+    def getIndex(self):
+        return self.pc

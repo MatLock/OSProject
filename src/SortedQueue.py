@@ -4,32 +4,37 @@ Created on 29/09/2013
 @author: matlock
 '''
 
-import threading
+
 from Kernel import *
-from Queue import Queue
 import time
 
-class IOQueue():
+io_semaphore = threading.Semaphore(0)
+
+class IOQueue(threading.Thread):
     
-    def __init__(self,kernel):
+    def __init__(self,scheduler):
         threading.Thread.__init__(self)
         self.queue = Queue()
-        self.kernel = kernel
+        self.scheduler = scheduler
         
-    def add(self,program):
+    def setScheduler(self,scheduler):
+        self.scheduler = scheduler
+        
+    def put(self,program):
         self.queue.put(program)
         
     def pop(self):
-        program = self.queue.pop()
+        program = self.queue.get()
         program.pc += 1
-        print program.id + "  Executing a I/O instruction.."
-        self.kernel.execute(program)
+        print " >> I/O QUEUE:   Executing a I/O instruction.. <<"
+        print " >> I/O QUEUE: "+"'"+program.getIdentifier()+"'"+":  ends the I/O instruction"
+        self.scheduler.add(program)
         
     def run(self):
         while (True):
             io_semaphore.acquire()
             time.sleep(5)
-            self.queue.pop()
+            self.pop()
     
 
 
