@@ -5,10 +5,12 @@ Created on 29/09/2013
 '''
 
 
-from Kernel import *
+from Queue import Queue
+import threading
 import time
 
 io_semaphore = threading.Semaphore(0)
+kernel_semaphore2 = threading.Semaphore(0)
 
 class IOQueue(threading.Thread):
     
@@ -17,23 +19,31 @@ class IOQueue(threading.Thread):
         self.queue = Queue()
         self.scheduler = scheduler
         
+    def isEmpty(self):
+        return self.queue.empty()
+        
+        
     def setScheduler(self,scheduler):
         self.scheduler = scheduler
         
-    def put(self,program):
-        self.queue.put(program)
+    def put(self,pcb):
+        self.queue.put(pcb)
         
     def pop(self):
-        program = self.queue.get()
-        program.pc += 1
-        print " >> I/O QUEUE:   Executing a I/O instruction.. <<"
-        print " >> I/O QUEUE: "+"'"+program.getIdentifier()+"'"+":  ends the I/O instruction"
-        self.scheduler.add(program)
+        time.sleep(5)
+        pcb = self.queue.get()
+        pcb.setPC(pcb.getPC() + 1)
+        print "I/O QUEUE:   Executing a I/O instruction.. "
+        print "I/O QUEUE: "+"'"+pcb.getPid()+"'"+":  ends the I/O instruction "
+        self.scheduler.add(pcb)
+        kernel_semaphore2.release()
+        
+    def shutDown(self):
+        print "I/O QUEUE: Shutdown!! "
         
     def run(self):
         while (True):
             io_semaphore.acquire()
-            time.sleep(5)
             self.pop()
     
 

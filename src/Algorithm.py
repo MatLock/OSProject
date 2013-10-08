@@ -14,8 +14,8 @@ class FIFO():
     def __init__(self):
         self.queue = Queue()
 
-    def add(self, thread):
-        self.queue.put(thread)
+    def add(self, pcb):
+        self.queue.put(pcb)
 
     def get(self):
         return self.queue.get()

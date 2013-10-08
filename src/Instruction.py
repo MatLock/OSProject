@@ -11,7 +11,7 @@ class BasicInstruction(Instruction):
     def execute(self,cpu):
         cpu.executeBasicInstruction()
         
-    def io(self):
+    def isIO(self):
         return False
             
 
@@ -20,7 +20,7 @@ class IO_Instruction(Instruction):
     def execute(self,cpu):
         cpu.executeIOinstruction()
         
-    def io(self):
+    def isIO(self):
         return True
         
     
