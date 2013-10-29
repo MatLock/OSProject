@@ -7,16 +7,39 @@ Created on 07/10/2013
 
 class MMU():
     
-    def __init__(self,memory):
-        self.memory = memory
+    def __init__(self):
+        self.emptyFrames = []
+        self.fullFrames = []
+        #AGREGAR ALGORITMO DE MANEJO DE MEMORIA!!
         
-    # POR AHORA LE PASO EL IDENTIFICADOR.. NO LA BASE
-    def load(self,pid,base,program):
-        self.memory.load(pid,base,program)
         
-    def getInstruction(self,index,pid):
-        return self.memory.getInstruction(index,pid)
+    def load(self,pcb,program):
+        frame = self.selectEmptyFrame()
+        frame.load(pcb,program)
+        self.fullFrames.append(frame)
+        
+    def sizeFullFrame(self):
+        return len(self.fullFrames)
     
-    # ESTE METODO TODAVIA NO LO USO
+    def sizeEmptyFrame(self):
+        return len(self.emptyFrames)
+        
+    def getFrame(self,pid):
+        for i in range(0,self.sizeFullFrame()):
+            if (self.fullFrames[i].getPCB().getPid() == pid):
+                return self.fullFrames[i]  
+            else:
+                i += 1
+        raise "Frame doesn't found"
+            
+    def getInstruction(self,index,pid):
+        return self.getFrame(pid).getInstruction(index)
+        
+    def selectEmptyFrame(self):
+        return self.emptyFrames.pop()
+    
     def getBase(self):
-        return self.memory.getBase()
+        return self.emptyFrames[0].getBase()
+    
+    def addEmptyFrame(self,frame):
+        self.emptyFrames.append(frame) 

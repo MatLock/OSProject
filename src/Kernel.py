@@ -14,6 +14,7 @@ from Algorithm import *
 import threading
 from SortedQueue import *
 from Instruction import *
+from Frame import *
 
 
 class Kernel(threading.Thread):
@@ -40,11 +41,11 @@ class Kernel(threading.Thread):
     
     def saveProgram(self,program):
         pid = program.getName()
-        base = 0 #self.mmu.getBase()
-        priority = 0
+        base = self.mmu.getBase()
+        priority = 0 #self.addPriority()
         size = len(program.instruction)
         pcb = PCB(pid,priority,base,size)
-        self.mmu.load(pid,base,program)
+        self.mmu.load(pcb,program)
         self.scheduler.add(pcb)
         
     def sendToIO(self,pcb):
@@ -82,7 +83,12 @@ def main():
     programb.addInstruction(instruction1)
     programb.addInstruction(instruction3)
     memory = Memory()
-    mmu = MMU(memory)
+    memory.buildMemory(6)
+    frame1 = Frame(memory,0)
+    frame2 = Frame(memory,3)
+    mmu = MMU()
+    mmu.addEmptyFrame(frame1)
+    mmu.addEmptyFrame(frame2)
     cpu = CPU(None,mmu,None)
     scheduler = Scheduler(FIFO())
     ioqueue = IOQueue(scheduler)
