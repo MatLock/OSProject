@@ -11,6 +11,7 @@ import time
 
 io_semaphore = threading.Semaphore(0)
 kernel_semaphore2 = threading.Semaphore(0)
+c_variable = threading.Condition(threading.RLock())
 
 class IOQueue(threading.Thread):
     
@@ -55,21 +56,20 @@ class SortedQueue():
         self.myList = []
         self.condition_var =threading.Condition(threading.RLock())
         
+    def isEmpty(self):
+        return len(self.myList) == 0
         
+    def __len__(self):
+        return len(self.myList)
+    
     def get(self):
         try:
             self.condition_var.acquire()
-            while(self.isEmpty(self.myList)):
+            while(self.isEmpty()):
                 self.condition_var.wait()
             return self.myList.pop(0)
         finally:
             self.condition_var.release() 
-            
-    def __len__(self):
-        return len(self.myList)   
-    
-    def isEmpty(self, aList):
-        return len(aList) == 0  
     
     def sort(self):
         try:
@@ -95,34 +95,33 @@ class SortedQueue():
             
 
 # WITH RECURSION !
-    def cons(self,anObject,aList):
-        aList.insert(0,anObject)
-        return aList
+def cons(self,anObject,aList):
+    aList.insert(0,anObject)
+    return aList
             
-    def head(self,aList):
-        return aList[0]
+def head(self,aList):
+    return aList[0]
     
-    def tail(self,aList):
-        aList.pop()
-        return aList
+def tail(self,aList):
+    aList.pop()
+    return aList
     
     
-    # Another way of putting an Object    
-    def insertion(self,anObject, aList):
-        try:
-            self.condition_var.acquire()    
-            # Base case !!
-            if (len(aList) == 0):
-                aList.append(anObject) 
-                return aList
-            # Recursive case!! 
-            else:
-                if(anObject < aList[0]):
-                    self.cons(anObject, aList)
-                    return aList
-                else:
-                    x = self.head(aList)
-                    return self.cons(x,(self.insertion(anObject,self.tail(aList))))
-        finally:
-            self.condition_var.notifyAll()
-            self.condition_var.release()
+# Another way of putting an Object    
+def insertion(self,anObject, aList):
+    try:
+        c_variable.acquire()    
+        # Base case !!
+        if (len(aList) == 0):
+            aList.append(anObject) 
+            return aList
+        # Recursive case!! 
+        elif(anObject < aList[0]):
+            cons(anObject, aList)
+            return aList
+        else:
+            x = head(aList)
+            return cons(x,(insertion(anObject,tail(aList))))
+    finally:
+        c_variable.notifyAll()
+        c_variable.release()

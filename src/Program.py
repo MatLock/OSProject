@@ -16,6 +16,9 @@ class Program():
     def setName(self,name):
         self.name = name
         
+    def getInstruction(self):
+        return self.instruction
+        
     
     def addInstruction(self,anInstruction):
         self.instruction.append(anInstruction)

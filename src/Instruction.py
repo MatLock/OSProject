@@ -22,6 +22,16 @@ class IO_Instruction(Instruction):
         
     def isIO(self):
         return True
+    
+    
+class Priority_Instruction(Instruction):
+    
+    def execute(self,cpu):
+        cpu.executePriorityInstruction()
+        
+    def isIO(self):
+        return False
+    
         
     
     

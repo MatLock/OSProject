@@ -29,11 +29,11 @@ class PFIFO():
         self.queue = Queue()
         self.priorityQueue = SortedQueue()
     
-    def add(self, element):
-        if (element.isAPriority):
-            self.priorityQueue.put(element)
+    def add(self, pcb):
+        if (pcb.getPriority() == 1):
+            self.priorityQueue.put(pcb)
         else:
-            self.queue.put(element)
+            self.queue.put(pcb)
     
     def get(self):
         if (len (self.priorityQueue) == 0):
@@ -41,6 +41,7 @@ class PFIFO():
         return self.priorityQueue.get()
     
     def isEmpty(self):
-        return self.priorityQueue == 0 and self.queue == 0
+        return self.priorityQueue.isEmpty() and self.queue.empty()
+    
     
 

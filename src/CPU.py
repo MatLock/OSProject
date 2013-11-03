@@ -30,6 +30,9 @@ class CPU(threading.Thread):
         
     def getPCB(self):
         return self.pcb
+    
+    def getKernel(self):
+        return self.kernel
             
     def setPCB(self,pcb):
         self.pcb = pcb
@@ -39,6 +42,9 @@ class CPU(threading.Thread):
         
     def executeIOinstruction(self):
         self.kernel.sendToIO(self.pcb)
+        
+    def executePriorityInstruction(self):
+        print "CPU: Running a Priority Instruction of the program:   " + str(self.getPCB().getPid())
         
     def executeBasicInstruction(self):
         print "CPU: Running a basic instruction of the program:   " + str(self.getPCB().getPid())
@@ -70,7 +76,9 @@ class Idle():
             else:
                 instruction.execute(cpu)
                 break
-        # BORRAR MEMORIA
+        if (i == cpu.getPCB().getSize()):
+            cpu.getKernel().delete(cpu.getPCB())
+            print "CPU: Program " + str(cpu.getPCB().getPid())+ " completed!"
         cpu.changeState()
         kernel_semaphore.release()
         

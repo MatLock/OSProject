@@ -26,7 +26,9 @@ class Kernel(threading.Thread):
         self.scheduler = scheduler
         self.mmu = mmu
         
-       
+    def getMMU(self):
+        return self.mmu
+      
     def getCPU(self):
         return self.cpu
     
@@ -38,18 +40,28 @@ class Kernel(threading.Thread):
     
     def shutDown(self):
         print "KERNEL: Shutdown!!"
-    
+        
+    def containsPriorityInstruction(self,program): 
+        y = filter(lambda x : isinstance(x,Priority_Instruction),program.getInstruction())
+        return len(y) >= 1
+            
+    def addPriority(self,program):
+        if(self.containsPriorityInstruction(program)):
+            return 1
+        else:
+            return 0
+        
     def saveProgram(self,program):
         pid = program.getName()
         base = self.mmu.getBase()
-        priority = 0 #self.addPriority()
+        priority = self.addPriority(program)
         size = len(program.instruction)
         pcb = PCB(pid,priority,base,size)
         self.mmu.load(pcb,program)
         self.scheduler.add(pcb)
         
     def sendToIO(self,pcb):
-        print "KERNEL:  Sending to IOQueue !!"
+        print "KERNEL:  Sending program " + str(pcb.getPid())+ " to IOQueue !!"
         self.getIOqueue().put(pcb)
         io_semaphore.release()
         
@@ -69,16 +81,20 @@ class Kernel(threading.Thread):
             kernel_semaphore.acquire()
             self.execute()
             
+    def delete(self,pcb):
+        self.getMMU().delete(pcb.getPid())
+        
+            
             
 def main():
     instruction1 = BasicInstruction()
     instruction2 = IO_Instruction()
-    instruction3 = BasicInstruction()
+    instruction3 = Priority_Instruction()
     program = Program('a')
     programb = Program('b') 
     program.addInstruction(instruction1)
     program.addInstruction(instruction2)
-    program.addInstruction(instruction3)
+    program.addInstruction(instruction1)
     programb.addInstruction(instruction1)
     programb.addInstruction(instruction1)
     programb.addInstruction(instruction3)
@@ -90,7 +106,7 @@ def main():
     mmu.addEmptyFrame(frame1)
     mmu.addEmptyFrame(frame2)
     cpu = CPU(None,mmu,None)
-    scheduler = Scheduler(FIFO())
+    scheduler = Scheduler(PFIFO())
     ioqueue = IOQueue(scheduler)
     kernel = Kernel(cpu,ioqueue,scheduler,mmu)
     cpu.setKernel(kernel)
