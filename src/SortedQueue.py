@@ -34,13 +34,13 @@ class IOQueue(threading.Thread):
         time.sleep(5)
         pcb = self.queue.get()
         pcb.setPC(pcb.getPC() + 1)
-        print "I/O QUEUE:   Executing a I/O instruction.. "
-        print "I/O QUEUE: "+"'"+pcb.getPid()+"'"+":  ends the I/O instruction "
+        print ("I/O QUEUE:   Executing a I/O instruction.. ")
+        print ("I/O QUEUE: "+"'"+pcb.getPid()+"'"+":  ends the I/O instruction ")
         self.scheduler.add(pcb)
         kernel_semaphore2.release()
         
     def shutDown(self):
-        print "I/O QUEUE: Shutdown!! "
+        print ("I/O QUEUE: Shutdown!! ")
         
     def run(self):
         while (True):

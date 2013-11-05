@@ -29,8 +29,7 @@ class MMU():
             for i in range(0,self.sizeFullFrame()):
                 if (self.fullFrames[i].getPCB().getPid() == pid):
                     return self.fullFrames[i]  
-                else:
-                    i += 1
+                i += 1
         except:
             "Frame doesn't found"
     
@@ -38,14 +37,14 @@ class MMU():
         frame = self.getFrame(pid)
         frame.delete()
         self.fullFrames.remove(frame)
-        print "MMU: The frame has been emptied"
+        print ("MMU: The frame has been emptied")
         self.emptyFrames.append(frame)
             
     def getInstruction(self,index,pid):
         return self.getFrame(pid).getInstruction(index)
         
     def selectEmptyFrame(self):
-        return self.emptyFrames.pop()
+        return self.emptyFrames.pop(0)
     
     def getBase(self):
         return self.emptyFrames[0].getBase()

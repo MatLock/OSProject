@@ -4,18 +4,18 @@ Created on 07/10/2013
 @author: matlock
 '''
 
-from Program import *
-from PCB import *
-from CPU import *
-from Memory import *
-from MMU import *
-from Scheduler import *
-from Algorithm import *
 import threading
-from SortedQueue import *
-from Instruction import *
-from Frame import *
-
+from src.Timer import *
+from src.Frame import *
+from src.CPU import *
+from src.Instruction import *
+from src.Program import *
+from src.SortedQueue import *
+from src.Scheduler import *
+from src.PCB import *
+from src.Algorithm import *
+from src.Memory import *
+from src.MMU import *
 
 class Kernel(threading.Thread):
     
@@ -39,7 +39,7 @@ class Kernel(threading.Thread):
         return self.scheduler
     
     def shutDown(self):
-        print "KERNEL: Shutdown!!"
+        print ("KERNEL: ShutDown!")
         
     def containsPriorityInstruction(self,program): 
         y = filter(lambda x : isinstance(x,Priority_Instruction),program.getInstruction())
@@ -61,12 +61,15 @@ class Kernel(threading.Thread):
         self.scheduler.add(pcb)
         
     def sendToIO(self,pcb):
-        print "KERNEL:  Sending program " + str(pcb.getPid())+ " to IOQueue !!"
+        print ("KERNEL:  Sending program " + str(pcb.getPid())+ " to IOQueue !!")
         self.getIOqueue().put(pcb)
         io_semaphore.release()
         
+    def savePCB(self,pcb):
+        self.getScheduler().add(pcb)
+        
     def execute(self):
-        print "KERNEL : Running !"
+        print ("KERNEL : Running !")
         if (self.scheduler.isEmpty() and self.ioqueue.isEmpty()):
             self.cpu.shutDown()
             self.ioqueue.shutDown()
@@ -81,8 +84,8 @@ class Kernel(threading.Thread):
             kernel_semaphore.acquire()
             self.execute()
             
-    def delete(self,pcb):
-        self.getMMU().delete(pcb.getPid())
+    def delete(self,pid):
+        self.getMMU().delete(pid)
         
             
             
@@ -91,27 +94,33 @@ def main():
     instruction2 = IO_Instruction()
     instruction3 = Priority_Instruction()
     program = Program('a')
-    programb = Program('b') 
     program.addInstruction(instruction1)
     program.addInstruction(instruction2)
     program.addInstruction(instruction1)
-    programb.addInstruction(instruction1)
-    programb.addInstruction(instruction1)
+    programb = Program('b') 
     programb.addInstruction(instruction3)
+    programc = Program('c')
+    programc.addInstruction(instruction1)
+    programc.addInstruction(instruction1)
+    programc.addInstruction(instruction1)
+    timer = Timer(1)
     memory = Memory()
-    memory.buildMemory(6)
+    memory.buildMemory(9)
     frame1 = Frame(memory,0)
     frame2 = Frame(memory,3)
+    frame3 = Frame(memory,6)
     mmu = MMU()
     mmu.addEmptyFrame(frame1)
     mmu.addEmptyFrame(frame2)
-    cpu = CPU(None,mmu,None)
+    mmu.addEmptyFrame(frame3)
+    cpu = CPU(None,mmu,None,timer)
     scheduler = Scheduler(PFIFO())
     ioqueue = IOQueue(scheduler)
     kernel = Kernel(cpu,ioqueue,scheduler,mmu)
     cpu.setKernel(kernel)
     kernel.saveProgram(program)
     kernel.saveProgram(programb)
+    kernel.saveProgram(programc)
     kernel.start()
     cpu.start()
     ioqueue.start()

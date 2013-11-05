@@ -12,11 +12,11 @@ class Memory():
 
     def buildMemory(self,size):
         for i in range(0,size):
-            self.blocks[i] = None
+            self.blocks[i] = i
 
     def load (self,number,instruction):
         self.blocks[number] = instruction
-        
+    
     def getInstruction(self,index):
         return self.blocks.get(index)
     

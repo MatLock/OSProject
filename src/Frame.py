@@ -25,7 +25,7 @@ class Frame():
         
     def delete(self):
         for i in range(0,self.pcb.getSize()):
-            self.memory.blocks[i] = None
+            self.memory.blocks[self.getBase() + i] = None
         
     def getInstruction(self,index):
         return self.memory.blocks.get(self.base + index)
