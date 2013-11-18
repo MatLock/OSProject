@@ -50,7 +50,7 @@ class CPU(threading.Thread):
     def contextSwitching(self):
         print ("CPU: Context Switching..")
         self.changeState()
-        print ("CPU: Cpu is now: " ) + str(self.state.printState())
+        print ("CPU: Cpu is now " ) + "'"+str(self.state.printState())+"'"
         self.getTimer().reset()
         kernel_semaphore.release()
         

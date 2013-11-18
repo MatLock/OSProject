@@ -53,12 +53,12 @@ class Kernel(threading.Thread):
         
     def saveProgram(self,program):
         pid = program.getName()
-        base = self.mmu.getBase()
         priority = self.addPriority(program)
         size = len(program.instruction)
+        base = self.mmu.getBase(size)
         pcb = PCB(pid,priority,base,size)
         self.mmu.load(pcb,program)
-        self.scheduler.add(pcb)
+        self.scheduler.add(pcb)    
         
     def sendToIO(self,pcb):
         print ("KERNEL:  Sending program " + str(pcb.getPid())+ " to IOQueue !!")
@@ -86,8 +86,7 @@ class Kernel(threading.Thread):
             
     def delete(self,pid):
         self.getMMU().delete(pid)
-        
-            
+               
             
 def main():
     instruction1 = BasicInstruction()
@@ -95,7 +94,7 @@ def main():
     instruction3 = Priority_Instruction()
     program = Program('a')
     program.addInstruction(instruction1)
-    program.addInstruction(instruction2)
+    program.addInstruction(instruction1)
     program.addInstruction(instruction1)
     programb = Program('b') 
     programb.addInstruction(instruction3)
@@ -103,16 +102,12 @@ def main():
     programc.addInstruction(instruction1)
     programc.addInstruction(instruction1)
     programc.addInstruction(instruction1)
-    timer = Timer(1)
+    timer = Timer(2)
     memory = Memory()
     memory.buildMemory(9)
-    frame1 = Frame(memory,0)
-    frame2 = Frame(memory,3)
-    frame3 = Frame(memory,6)
+    frame1 = Frame(memory,0,9)
     mmu = MMU()
     mmu.addEmptyFrame(frame1)
-    mmu.addEmptyFrame(frame2)
-    mmu.addEmptyFrame(frame3)
     cpu = CPU(None,mmu,None,timer)
     scheduler = Scheduler(PFIFO())
     ioqueue = IOQueue(scheduler)

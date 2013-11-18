@@ -26,31 +26,9 @@ class Memory():
     def size(self):
         return len(self.blocks)
     
-    
-    def checkForRoom(self,programSize,aPlace):
-        i=1
-        while(i<programSize):
-            if(self.blocks[aPlace+1]==None):
-                i+=1
-            else:
-                return False
-        return True
-            
-    def getFirstFreeCell(self):
-            i=1
-            while(i <= self.size()):
-                if(not self.blocks[i]==None):
-                    i+=1
-                return i
-          
-    
-    def getBase(self,programSize):
-        if(self.isEmpty()):
-            return 0
-        elif(self.checkForRoom(programSize,self.getFirstFreeCell())):
-            return self.getFirstFreeCell()
-        else:
-            return None
+    def printMemory(self):
+        for i in range(0,9):
+            print (self.blocks[i])
             
                             
                     
