@@ -37,13 +37,13 @@ class Frame():
         self.isEmpty = False
         
     def splitFrame(self,size):
-        frame = Frame(self.memory,self.base,size - 1)
+        frame = Frame(self.memory,self.base,size)
         self.setBase(self.getBase() + size)
         self.setSize(self.getSize() - size)
         return frame
         
     def delete(self):
-        for i in range(0,self.memory.getSize()):
+        for i in range(0,self.getSize()):
             self.memory.blocks[self.getBase() + i] = None
         
     def getInstruction(self,index):

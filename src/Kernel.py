@@ -105,7 +105,7 @@ def main():
     program.addInstruction(instruction1)
     program.addInstruction(instruction1)
     program.addInstruction(instruction1)
-    programb = Program('b') 
+    programb = Program('b')
     programb.addInstruction(instruction3)
     programc = Program('c')
     programc.addInstruction(instruction1)

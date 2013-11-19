@@ -117,3 +117,6 @@ class MMU():
     
     def addEmptyFrame(self,frame):
         self.emptyFrames.append(frame) 
+        
+    def printMemory(self):
+        self.fullFrames[0].memory.printMemory()
