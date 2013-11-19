@@ -16,6 +16,9 @@ class Program():
     def setName(self,name):
         self.name = name
         
+    def setList(self,aList):
+        self.instruction = aList
+        
     def getInstruction(self):
         return self.instruction
         

@@ -4,7 +4,7 @@ Created on 07/10/2013
 @author: matlock
 '''
 
-import threading
+
 from src.Timer import *
 from src.Frame import *
 from src.CPU import *
@@ -52,13 +52,22 @@ class Kernel(threading.Thread):
             return 0
         
     def saveProgram(self,program):
-        pid = program.getName()
-        priority = self.addPriority(program)
-        size = len(program.instruction)
-        base = self.mmu.getBase(size)
-        pcb = PCB(pid,priority,base,size)
-        self.mmu.load(pcb,program)
-        self.scheduler.add(pcb)    
+        try:
+            pid = program.getName()
+            priority = self.addPriority(program)
+            size = len(program.instruction)
+            base = self.mmu.getBase(size)
+            pcb = PCB(pid,priority,base,size)
+            self.mmu.load(pcb,program)
+            self.scheduler.add(pcb)
+        except (Exception):
+            print(">>>>> KERNEL: COMPACTING!!! <<<<<<")
+            self.mmu.compact()
+            base = self.mmu.getBase(size)
+            pcb = PCB(pid,priority,base,size)
+            self.mmu.load(pcb,program)
+            self.scheduler.add(pcb)
+                 
         
     def sendToIO(self,pcb):
         print ("KERNEL:  Sending program " + str(pcb.getPid())+ " to IOQueue !!")

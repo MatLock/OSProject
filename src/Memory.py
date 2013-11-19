@@ -6,13 +6,17 @@ Created on 08/10/2013
 
 class Memory():
     
-    def __init__(self):
+    def __init__(self,):
         self.blocks = {}
-        
+        self.size = 0
 
     def buildMemory(self,size):
         for i in range(0,size):
             self.blocks[i] = i
+        self.size = size
+            
+    def getSize(self):
+        return self.size
 
     def load (self,number,instruction):
         self.blocks[number] = instruction
@@ -22,10 +26,7 @@ class Memory():
     
     def isEmpty(self):
         return len(self.blocks)==0
-    
-    def size(self):
-        return len(self.blocks)
-    
+        
     def printMemory(self):
         for i in range(0,9):
             print (self.blocks[i])
