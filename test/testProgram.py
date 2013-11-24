@@ -5,7 +5,7 @@ Created on 19/11/2013
 '''
 import unittest
 from src.Program import *
-from unittest.mock import Mock
+from mockito import *
 
 
 class TestProgram(unittest.TestCase):
@@ -13,7 +13,7 @@ class TestProgram(unittest.TestCase):
 
     def setUp(self):
         self.program = Program("myProgram")
-        self.instrucion=Mock()
+        self.instrucion = mock()
 
 
 
@@ -21,6 +21,7 @@ class TestProgram(unittest.TestCase):
     def testAddInstruction(self):
         self.program.addInstruction(self.instrucion)
         self.assertEquals(self.program.getInstruction()[0],self.instrucion)
+        self.assertEqual(len(self.program.instruction), 1)
         
 
 

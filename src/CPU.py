@@ -20,30 +20,36 @@ class CPU(threading.Thread):
         self.mmu = mmu
         self.pcb = pcb
         
-    def getMMU(self):
-        return self.mmu
-        
+    def setState(self,state):
+        self.state=state
+    
     def setKernel(self,kernel):
         self.kernel = kernel
     
-    def changeState(self):
-        self.state.changeState(self)
+    def setPCB(self,pcb):
+        self.pcb = pcb
+    
+    
+    def getMMU(self):
+        return self.mmu
         
     def getPCB(self):
         return self.pcb
     
     def getKernel(self):
         return self.kernel
-            
-    def setPCB(self,pcb):
-        self.pcb = pcb
+    
+    def getTimer(self):
+        return self.timer
+    
+    def changeState(self):
+        self.state.changeState(self)
         
+    
+            
     def execute(self):
         self.state.execute(self)
  
-    def getTimer(self):
-        return self.timer
-           
     def executeIOinstruction(self):
         self.kernel.sendToIO(self.pcb)
         
@@ -87,7 +93,7 @@ class Idle():
                 cpu.getTimer().increaseActualValue()
                 cpu.getPCB().setPC(pc)
                 instruction.execute(cpu)
-                time.sleep(2)
+                time.sleep(0)
             else:
                 instruction.execute(cpu)
                 break

@@ -28,7 +28,7 @@ class Memory():
         return len(self.blocks)==0
         
     def printMemory(self):
-        for i in range(0,9):
+        for i in range(0,5):
             print (self.blocks[i])
             
                             

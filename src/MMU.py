@@ -4,8 +4,9 @@ Created on 07/10/2013
 @author: matlock
 '''
 
-import threading
 from src.Program import *
+from src.Disk import *
+import threading 
 
 conditionMMU = threading.Condition(threading.RLock())
 
@@ -53,32 +54,35 @@ class MMU():
             conditionMMU.acquire()
             frame = self.getFrame(pid)
             frame.delete()
+            size = frame.getSize()
             self.fullFrames.remove(frame)
             print ("MMU: The frame has been emptied")
             self.emptyFrames.append(frame)
+            return size
         finally:
             conditionMMU.release()
             
             
     def compact(self):
         try:
-            conditionMMU.acquire()
-            pcbs = []
-            current = []
-            x = len(self.fullFrames)
-            for i in range(0,x):
-                y = self.fullFrames[i]
-                pcbs.append(y.getPCB())
-                program = Program(y.getPCB().getPid())
-                program.setList(y.getAll())    
-                current.append(program)
-            frame = self.emptyFrames.pop(0)
-            frame.reset()
-            self.emptyFrames = []
-            self.fullFrames = []
-            self.addEmptyFrame(frame)
-            for i in range(0,x):
-                self.load(pcbs[i],current[i])
+            if (len(self.emptyFrames) > 0):
+                conditionMMU.acquire()
+                pcbs = []
+                current = []
+                x = len(self.fullFrames)
+                for i in range(0,x):
+                    y = self.fullFrames[i]
+                    pcbs.append(y.getPCB())
+                    program = Program(y.getPCB().getPid())
+                    program.setList(y.getAll())    
+                    current.append(program)
+                frame = self.emptyFrames.pop(0)
+                frame.reset()
+                self.emptyFrames = []
+                self.fullFrames = []
+                self.addEmptyFrame(frame)
+                for i in range(0,x):
+                    self.load(pcbs[i],current[i])
         finally:
             conditionMMU.release()
         
@@ -95,11 +99,10 @@ class MMU():
             conditionMMU.acquire()
             i = 0
             while (i < len(self.emptyFrames)):
-                x = self.emptyFrames.pop(i)
+                x = self.emptyFrames[i]
                 if (x.getSize() >= size):
-                    self.emptyFrames.insert(i,x)
-                    return x
-                raise Exception ("There isn't any space to allocate the program!")
+                    return self.emptyFrames.pop(i)
+                raise Exception ("There isn't any frame to allocate the program!")
         finally:
             conditionMMU.release()
     
@@ -111,7 +114,7 @@ class MMU():
                 if(self.emptyFrames[i].getSize() >= i):
                     return self.emptyFrames[i].getBase()
                 i += 1
-            raise Exception ("There isn't any space to allocate the program!")
+            raise Exception ("There isn't any frame to allocate the program!")
         finally:
             conditionMMU.release()
     

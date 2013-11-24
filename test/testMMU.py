@@ -26,8 +26,8 @@ class testMMU(unittest.TestCase):
         self.frame4 = Frame(self.memory,4,1)
         self.mmu = MMU()
         self.mmu.fullFrames.append(self.frame1)
-        self.mmu.fullFrames.append(self.frame2)
-        self.mmu.emptyFrames.append(self.frame3)
+        self.mmu.fullFrames.append(self.frame3)
+        self.mmu.emptyFrames.append(self.frame2)
         self.mmu.emptyFrames.append(self.frame4)
         self.program = Program('a')
         self.program.addInstruction(self.instruction1)
@@ -36,7 +36,7 @@ class testMMU(unittest.TestCase):
         self.pcbB = PCB('b',0,3,1)
         self.programb.addInstruction(self.instruction1)
         self.frame1.load(self.pcbA,self.program)
-        self.frame2.load(self.pcbB,self.programb)
+        self.frame3.load(self.pcbB,self.programb)
         self.programc = Program('c')
         self.programc.addInstruction(self.instruction1)
         self.programc.addInstruction(self.instruction1)
@@ -44,11 +44,14 @@ class testMMU(unittest.TestCase):
         self.pcbC = PCB('c',0,3,3)
         
     def testCompact(self):
+        self.memory.printMemory()
         self.mmu.compact()
         self.mmu.load(self.pcbC,self.programc)
         for i in range(0,5):
             instruction = self.memory.blocks[i]
             self.assertIsInstance(instruction, BasicInstruction, "Compact test")
+        print( "                                   ")
+        self.memory.printMemory()
         
         
 if __name__ == "__main__":
