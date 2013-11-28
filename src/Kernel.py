@@ -138,7 +138,7 @@ def main2():
     cpu.start()
     ioqueue.start()
     
-def main():
+def main4():
     instruction1 = BasicInstruction()
     instruction2 = IO_Instruction()
     instruction3 = Priority_Instruction()
@@ -218,7 +218,34 @@ def main3():
         print( "     ")
         memory.printMemory()
         print(len(disk.programList))
-    
+        
+def main():
+
+        instruction1 = BasicInstruction()
+        instruction2 = BasicInstruction()      
+        memory = Memory()
+        memory.buildMemory(5)
+        frame1 = Frame(memory,0,1)
+        frame2 = Frame(memory,1,2)
+        frame3 = Frame(memory,3,1)
+        frame4 = Frame(memory,4,1)
+        mmu = MMU()
+        mmu.fullFrames.append(frame1)
+        mmu.fullFrames.append(frame3)
+        mmu.emptyFrames.append(frame2)
+        mmu.emptyFrames.append(frame4)
+        program = Program('a')
+        program.addInstruction(instruction1)
+        pcbA = PCB('a',0,0,1)
+        programb = Program('b')
+        pcbB = PCB('b',0,3,1)
+        programb.addInstruction(instruction1)
+        frame1.load(pcbA,program)
+        frame3.load(pcbB,programb)
+        memory.printMemory()
+        print(memory.getEmptyCells())
+        mmu.compact()
+        memory.printMemory()   
     
 if __name__ == '__main__':
     main()

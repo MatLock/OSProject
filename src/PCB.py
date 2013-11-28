@@ -32,6 +32,9 @@ class PCB():
     def setPC(self,index):
         self.pc = index
         
+    def setBase(self,aNumber):
+        self.base = aNumber
+        
     def __lt__(self,pcb):
         return self.getPriority() < pcb.getPriority()
     

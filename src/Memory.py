@@ -12,7 +12,7 @@ class Memory():
 
     def buildMemory(self,size):
         for i in range(0,size):
-            self.blocks[i] = i
+            self.blocks[i] = None
         self.size = size
             
     def getSize(self):
@@ -30,6 +30,20 @@ class Memory():
     def printMemory(self):
         for i in range(0,5):
             print (self.blocks[i])
+            
+    def moveOnePlace(self,base,size):
+        self.blocks[base - 1] = self.blocks[base]
+        for i in range(0,size):
+            self.blocks[base + i] = self.blocks[base + i + 1]
+        self.blocks[base + size - 1] = None 
+            
+    def getEmptyCells(self):
+        result = []
+        for i in range(0,self.size):
+            if(self.blocks[i] == None):
+                result.append(i)
+        return result
+            
             
                             
                     

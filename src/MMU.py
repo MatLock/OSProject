@@ -6,6 +6,7 @@ Created on 07/10/2013
 
 from src.Program import *
 from src.Disk import *
+from src.Frame import *
 import threading 
 
 conditionMMU = threading.Condition(threading.RLock())
@@ -62,27 +63,30 @@ class MMU():
         finally:
             conditionMMU.release()
             
+    def selectMinor(self):
+        frame = self.emptyFrames[0]
+        result = 0
+        for i in range(1,len(self.emptyFrames)):
+            if (frame.getBase() < self.emptyFrames[i].getBase()):
+                frame = self.emptyFrames[i]
+                result = i
+        return self.emptyFrames.pop(result)
+    
+    def buildEmptyFrame(self,aList):
+        frame = Frame(self.fullFrames[0].getMemory(),aList[0],len(aList))
+        return frame
+            
             
     def compact(self):
         try:
+            conditionMMU.acquire()
             if (len(self.emptyFrames) > 0):
-                conditionMMU.acquire()
-                pcbs = []
-                current = []
                 x = len(self.fullFrames)
                 for i in range(0,x):
-                    y = self.fullFrames[i]
-                    pcbs.append(y.getPCB())
-                    program = Program(y.getPCB().getPid())
-                    program.setList(y.getAll())    
-                    current.append(program)
-                frame = self.emptyFrames.pop(0)
-                frame.reset()
+                    fullFrame = self.fullFrames[i]
+                    fullFrame.moveUp()
                 self.emptyFrames = []
-                self.fullFrames = []
-                self.addEmptyFrame(frame)
-                for i in range(0,x):
-                    self.load(pcbs[i],current[i])
+                self.addEmptyFrame(self.buildEmptyFrame(self.fullFrames[0].getMemory().getEmptyCells()))
         finally:
             conditionMMU.release()
         

@@ -35,6 +35,14 @@ class Frame():
             self.memory.load(self.base + i,program.instruction[i])
             i+= 1
         self.isEmpty = False
+    
+    def moveUp(self):
+        x = self.base
+        while((self.getBase() > 0) and (self.memory.blocks[self.base - 1] == None)):
+            self.setBase(self.getBase() - 1)
+            self.getPCB().setBase(self.getBase() - 1)
+            self.memory.moveOnePlace(x,self.size)
+            x -= 1   
         
     def splitFrame(self,size):
         frame = Frame(self.memory,self.base,size)
@@ -58,8 +66,7 @@ class Frame():
     def reset(self):
         self.pcb = None
         self.isEmpty = True
-        self.setBase(0)
-        self.setSize(self.getMemory().getSize())
+        self.setSize(self.getMemory().getSize() - self.getBase())
         self.delete()   
     
     def getPCB(self):
