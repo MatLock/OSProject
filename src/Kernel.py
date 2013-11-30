@@ -104,7 +104,15 @@ class Kernel(threading.Thread):
         if (not self.getDisk().isEmpty()):
             self.getDisk().get(sizeOfProgramDeleted)
             
-def main2():
+    def executeProgram(self,anIdentifier):
+        program = self.getDisk().getProgram(anIdentifier)
+        self.saveProgram(program)
+        self.start()
+        self.getCPU().start()
+        self.getIOqueue().start()
+        
+            
+def main9():
     instruction1 = BasicInstruction()
     instruction2 = IO_Instruction()
     instruction3 = Priority_Instruction()
@@ -219,7 +227,7 @@ def main3():
         memory.printMemory()
         print(len(disk.programList))
         
-def main():
+def main6():
 
         instruction1 = BasicInstruction()
         instruction2 = BasicInstruction()      
@@ -245,7 +253,37 @@ def main():
         memory.printMemory()
         print(memory.getEmptyCells())
         mmu.compact()
-        memory.printMemory()   
+        memory.printMemory()
+        
+        
+def main():
+    instruction1 = BasicInstruction()
+    instruction3 = Priority_Instruction()
+    program = Program('a')
+    program.addInstruction(instruction1)
+    program.addInstruction(instruction1)
+    program.addInstruction(instruction1)
+    programb = Program('b')
+    programb.addInstruction(instruction3)
+    programc = Program('c')
+    programc.addInstruction(instruction1)
+    programc.addInstruction(instruction1)
+    programc.addInstruction(instruction1)
+    timer = Timer(2)
+    memory = Memory()
+    memory.buildMemory(9)
+    frame1 = Frame(memory,0,9)
+    mmu = MMU()
+    mmu.addEmptyFrame(frame1)
+    cpu = CPU(None,mmu,None,timer)
+    scheduler = Scheduler(PFIFO())
+    ioqueue = IOQueue(scheduler)
+    disk = Disk(None)
+    kernel = Kernel(cpu,ioqueue,scheduler,mmu,disk)
+    disk.setKernel(kernel)
+    disk.save(program)
+    cpu.setKernel(kernel)
+    kernel.executeProgram('a')   
     
 if __name__ == '__main__':
     main()

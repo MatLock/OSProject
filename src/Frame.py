@@ -29,6 +29,13 @@ class Frame():
     def getMemory(self):
         return self.memory
     
+      
+    def getPCB(self):
+        return self.pcb
+    
+    def isEmpty(self):
+        return self.isEmpty
+    
     def load(self,pcb,program):
         self.pcb = pcb
         for i in range(0,pcb.getSize()):
@@ -56,23 +63,6 @@ class Frame():
         
     def getInstruction(self,index):
         return self.memory.blocks.get(self.base + index)
-    
-    def getAll(self):
-        result = []
-        for i in range(0,self.getSize()):
-            result.append(self.getInstruction(i))
-        return result    
-            
-    def reset(self):
-        self.pcb = None
-        self.isEmpty = True
-        self.setSize(self.getMemory().getSize() - self.getBase())
-        self.delete()   
-    
-    def getPCB(self):
-        return self.pcb
-    
-    def isEmpty(self):
-        return self.isEmpty
+   
         
     

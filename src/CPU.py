@@ -45,8 +45,6 @@ class CPU(threading.Thread):
     def changeState(self):
         self.state.changeState(self)
         
-    
-            
     def execute(self):
         self.state.execute(self)
  
