@@ -5,17 +5,20 @@ Created on 07/10/2013
 '''
 
 
-from src.Timer import *
-from src.Frame import *
-from src.CPU import *
-from src.Instruction import *
-from src.Program import *
+from src.Timer import Timer
+from src.Frame import Frame
+from src.CPU  import *
 from src.SortedQueue import *
-from src.Scheduler import *
-from src.PCB import *
-from src.Algorithm import *
-from src.Memory import *
-from src.MMU import *
+from src.Program import Program
+from src.Scheduler import Scheduler
+from src.PCB import PCB
+from src.Memory import Memory 
+from src.Disk import Disk
+from src.Instruction import BasicInstruction
+from src.Instruction import IO_Instruction
+from src.Instruction import Priority_Instruction
+from src.MMU import MMU
+from src.Algorithm  import PFIFO
 
 class Kernel(threading.Thread):
     
@@ -43,6 +46,9 @@ class Kernel(threading.Thread):
         return self.scheduler
     
     def shutDown(self):
+        log = open("../resource/log.txt","a")
+        log.write("KERNEL: ShutDown! \n")
+        log.close()
         print ("KERNEL: ShutDown!")
         
     def containsPriorityInstruction(self,program): 
@@ -73,9 +79,16 @@ class Kernel(threading.Thread):
                 self.scheduler.add(pcb)
             except (Exception):
                 self.getDisk().save(program)
+                
+    def saveOnDisk(self,aList):
+        for i in aList:
+            self.getDisk().save(i)
         
         
     def sendToIO(self,pcb):
+        log = open("../resource/log.txt","a")
+        log.write("KERNEL: Sending program" +str(pcb.getPid())+ "to IOQueue!! \n")
+        log.close()
         print ("KERNEL:  Sending program " + str(pcb.getPid())+ " to IOQueue !!")
         self.getIOqueue().put(pcb)
         io_semaphore.release()
@@ -84,7 +97,6 @@ class Kernel(threading.Thread):
         self.getScheduler().add(pcb)
         
     def execute(self):
-        print ("KERNEL : Running !")
         if (self.scheduler.isEmpty() and self.ioqueue.isEmpty() and self.getDisk().isEmpty()):
             self.cpu.shutDown()
             self.ioqueue.shutDown()
@@ -99,10 +111,13 @@ class Kernel(threading.Thread):
             kernel_semaphore.acquire()
             self.execute()
             
+    def stateOfCpu(self):
+        return self.getCPU().printState()
+            
     def delete(self,pid):
-        sizeOfProgramDeleted = self.getMMU().delete(pid)
+        size = len(self.getMMU().getMemory().getEmptyCells())
         if (not self.getDisk().isEmpty()):
-            self.getDisk().get(sizeOfProgramDeleted)
+            self.getDisk().get(size)
             
     def executeProgram(self,anIdentifier):
         program = self.getDisk().getProgram(anIdentifier)
@@ -111,8 +126,10 @@ class Kernel(threading.Thread):
         self.getCPU().start()
         self.getIOqueue().start()
         
+    
+        
             
-def main9():
+def main1():
     instruction1 = BasicInstruction()
     instruction2 = IO_Instruction()
     instruction3 = Priority_Instruction()
@@ -227,7 +244,7 @@ def main3():
         memory.printMemory()
         print(len(disk.programList))
         
-def main6():
+def main2():
 
         instruction1 = BasicInstruction()
         instruction2 = BasicInstruction()      
@@ -282,6 +299,8 @@ def main():
     kernel = Kernel(cpu,ioqueue,scheduler,mmu,disk)
     disk.setKernel(kernel)
     disk.save(program)
+    disk.save(programb)
+    disk.save(programc)
     cpu.setKernel(kernel)
     kernel.executeProgram('a')   
     

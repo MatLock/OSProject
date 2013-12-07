@@ -5,7 +5,8 @@ Created on 23/09/2013
 '''
 
 
-from src.SortedQueue import *
+from SortedQueue import SortedQueue
+from Queue import Queue
 
 
 class FIFO():

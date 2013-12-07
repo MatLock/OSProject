@@ -4,9 +4,9 @@ Created on 07/10/2013
 @author: matlock
 '''
 
-from src.Program import *
-from src.Disk import *
-from src.Frame import *
+from src.Program import * 
+from  src.Disk import *
+from src.Frame  import *
 import threading 
 
 conditionMMU = threading.Condition(threading.RLock())
@@ -18,6 +18,12 @@ class MMU():
         self.fullFrames = []
         #AGREGAR ALGORITMO DE MANEJO DE MEMORIA!!
         
+        
+    def getMemory(self):
+        if(not len(self.emptyFrames) == 0):
+            return self.emptyFrames[0].getMemory()
+        else:
+            self.fullFrames[0].getMemory()
         
     def load(self,pcb,program):
         try:

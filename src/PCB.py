@@ -4,7 +4,6 @@ Created on 07/10/2013
 @author: matlock
 '''
 
-
 class PCB():
     
     def __init__(self,pid,priority,base,size):
@@ -40,6 +39,3 @@ class PCB():
     
     def __gt__(self,pcb):
         return self.getPriority() > pcb.getPriority()
-                                                    
-        
-        

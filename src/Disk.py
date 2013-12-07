@@ -23,8 +23,6 @@ class Disk():
     def save(self,program):
         self.programList.append(program)
         
-    
-        
     def getProgram(self,anIdentifier):
         for i in range(0,len(self.programList)):
             if (self.programList[i].getName() == anIdentifier):
@@ -34,5 +32,5 @@ class Disk():
     def get(self,size):
         for i in range(0,len(self.programList)):
             if (len(self.programList[i].getInstruction()) <= size):
-                self.getKernel().saveProgram(self.programList[i])
+                self.getKernel().saveProgram(self.programList.pop(i))
                 return 0

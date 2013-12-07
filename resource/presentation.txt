@@ -1,0 +1,11 @@
+##########################################################################################
+#                      Welcome to Peach OS 1.0                                           #
+# _______________________________________________________________________                #
+# 	 put '--help' if you need to know what commands are available                        #
+# _______________________________________________________________________                #
+#                                                                                        #
+#                                                                                        #
+#         Any questions,suggestions or for bugs report feel free to send us an Email to  #
+#         jfflores90@gmail.com                                                           #
+#         santiagoladavaz@gmail.com                                                      #
+##########################################################################################
