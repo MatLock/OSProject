@@ -46,7 +46,7 @@ class Kernel(threading.Thread):
         return self.scheduler
     
     def shutDown(self):
-        log = open("../resource/log.txt","a")
+        log = open("resource/log.txt","a")
         log.write("KERNEL: ShutDown! \n")
         log.close()
         print ("KERNEL: ShutDown!")
@@ -86,7 +86,7 @@ class Kernel(threading.Thread):
         
         
     def sendToIO(self,pcb):
-        log = open("../resource/log.txt","a")
+        log = open("resource/log.txt","a")
         log.write("KERNEL: Sending program" +str(pcb.getPid())+ "to IOQueue!! \n")
         log.close()
         print ("KERNEL:  Sending program " + str(pcb.getPid())+ " to IOQueue !!")

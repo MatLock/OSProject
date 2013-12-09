@@ -34,7 +34,7 @@ class IOQueue(threading.Thread):
         time.sleep(5)
         pcb = self.queue.get()
         pcb.setPC(pcb.getPC() + 1)
-        log = open("../resource/log.txt","a")
+        log = open("resource/log.txt","a")
         log.write("I/O QUEUE: Executing an I/O Instruction  \n"
                   "I/O QUEUE: "+"'"+pcb.getPid()+"'"+":  ends the I/O instruction  \n") 
         print ("I/O QUEUE:   Executing an I/O Instruction.. ")
@@ -44,7 +44,7 @@ class IOQueue(threading.Thread):
         kernel_semaphore2.release()
         
     def shutDown(self):
-        log = open("../resource/log.txt", "a")
+        log = open("resource/log.txt", "a")
         log.write("I/O QUEUE: Shutdown!!  \n")
         log.close()
         print ("I/O QUEUE: Shutdown!! ")

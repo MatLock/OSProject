@@ -1,0 +1,13 @@
+CPU: Running a basic instruction of the program:   a
+CPU: Running a basic instruction of the program:   a
+CPU: Context Switching.. 
+CPU: Cpu is now'Idle' 
+CPU: Running a basic instruction of the program:   a
+CPU: Running a basic instruction of the program:   a
+CPU: Context Switching.. 
+CPU: Cpu is now'Idle' 
+CPU: Running a basic instruction of the program:   a
+CPU: Running a basic instruction of the program:   a
+CPU: Context Switching.. 
+CPU: Cpu is now'Idle' 
+CPU: Running a basic instruction of the program:   a

@@ -55,7 +55,7 @@ class CPU(threading.Thread):
         self.kernel.sendToIO(self.pcb)
         
     def contextSwitching(self):
-        log = open("../resource/log.txt", "a")
+        log = open("resource/log.txt","a")
         log.write("CPU: Context Switching.. \n")
         print ("CPU: Context Switching..")
         self.changeState()
@@ -66,20 +66,20 @@ class CPU(threading.Thread):
         kernel_semaphore.release()
         
     def executePriorityInstruction(self):
-        log = open("../resource/log.txt","a")
+        log = open("resource/log.txt","a")
         log.write("CPU: Running a Priority Instruction of the program:   " + str(self.getPCB().getPid())+"\n")
         log.close()
         print ("CPU: Running a Priority Instruction of the program:   " + str(self.getPCB().getPid()))
         
         
     def executeBasicInstruction(self):
-        log = open("../resource/log.txt","a")
+        log = open("resource/log.txt","a")
         log.write("CPU: Running a basic instruction of the program:   " + str(self.getPCB().getPid())+"\n")
         log.close()
         print ("CPU: Running a basic instruction of the program:   " + str(self.getPCB().getPid()))
         
     def shutDown(self):
-        log = open("../resource/log.txt","a")
+        log = open("resource/log.txt","a")
         log.write("CPU: Shutdown!!  \n")
         log.close()
         print ("CPU: Shutdown!! ")
@@ -114,7 +114,7 @@ class Idle():
                 break
         if (pc == cpu.getPCB().getSize()):
             cpu.getKernel().delete(identifier)
-            log = open("../resource/log.txt","a")
+            log = open("resource/log.txt","a")
             log.write("CPU: Program " + str(identifier)+ " completed! \n")
             log.close()
             print ("CPU: Program " + str(identifier)+ " completed!")

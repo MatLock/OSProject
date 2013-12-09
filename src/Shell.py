@@ -5,7 +5,8 @@ Created on 06/12/2013
 '''
 
 from src.Kernel import *
-import string
+from service.UserDAO import *
+
 
 
 class Shell:
@@ -13,7 +14,6 @@ class Shell:
     def __init__(self):
         self.kernel = None
         self.programsID = []
-        self.users = {}
         self.actualUser = None
         self.methods ={"addUser" : self.addUser,
                        "stateOfCpu" : self.stateOfCpu,
@@ -37,30 +37,36 @@ class Shell:
     def addUser(self):
         newUser = raw_input("New user: ")
         password = raw_input("Enter the new password: ")
-        self.users[newUser] = password
+        anId = raw_input("Enter an unique ID: ")
+        userDAO = UserDAO()
+        userDAO.addUser(newUser,password,anId)
         
     def changePassword(self):
             oldPassword = raw_input("Enter the old password: ")
-            if (self.users[self.actualUser] == oldPassword):
+            userDAO = UserDAO()
+            result = userDAO.getField("PASSWORD",self.actualUser)
+            if (result[0][0] == oldPassword):
                 print("Correct Password!")
                 newPassword = raw_input("Enter the new password please:")
-                self.users[self.actualUser] = newPassword
+                userDAO.refreshField("PASSWORD",self.actualUser,newPassword)
             else:
                 raise Exception("User doesn't exist!")
         
-    def validate(self,anId,password):
-        if (self.users.has_key(anId) and self.users[anId] == password):
-            print("Welcome:" + str(anId))
-        else:
+    def validate(self,user,password):
+        #PREGUNTAR COMO PUEDO ACCEDER DE MANERA ESTATICA.. (SIN INSTANCIAR)"
+        userDAO = UserDAO()
+        result = userDAO.get(user, password)
+        try:
+            if (result[0][0] == user and result[0][1] == password):
+                print("Welcome:  " + str(user))
+        except (Exception):
             raise Exception ("Wrong password or id!")
     
     
     def help(self):
-        print("Commands are:")
-        print(self.methods.keys())
+        print("Commands are: \n" +str(self.methods.kfeeys()))
         
     def initialize(self):
-        self.users["MatLock"] = "federico"
         presentation = open("resource/presentation.txt","r")
         print(presentation.read())
         presentation.close()
@@ -167,9 +173,12 @@ class Shell:
         cpu.setKernel(kernel)
         return x             
                 
-            
-            
-            
+def main():
+    s = Shell()
+    s.run()
+    
+if __name__ == '__main__':
+    main()            
             
             
             
