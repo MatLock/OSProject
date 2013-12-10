@@ -1,7 +1,7 @@
 '''
 Created on 04/11/2013
 
-@author: matlock
+@author: matlock,santiago
 '''
 
 class Timer():

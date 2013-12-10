@@ -1,7 +1,7 @@
 '''
 Created on 23/11/2013
 
-@author: matlock
+@author: matlock,santiago
 '''
 
 class Disk():
@@ -31,6 +31,6 @@ class Disk():
         
     def get(self,size):
         for i in range(0,len(self.programList)):
-            if (len(self.programList[i].getInstruction()) <= size):
+            if (len(self.programList[i].getInstruction()) <= size ):
                 self.getKernel().saveProgram(self.programList.pop(i))
                 return 0

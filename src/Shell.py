@@ -1,11 +1,12 @@
 '''
 Created on 06/12/2013
 
-@author: matlock
+@author: matlock,satiago
 '''
 
 from src.Kernel import *
 from service.UserDAO import *
+from src.Factory import *
 
 
 
@@ -24,12 +25,18 @@ class Shell:
                        "programsID" : self.printProgramsID,
                        "execute '@param<Identifier>'" : None,
                        }
+        self.dao = UserDAO()
+        self.logger = Logger("/home/matlock/Escritorio/Sistemas Operativos/OSProyect/resource/log.txt")
+        self.factory = Factory(self.dao,self.logger)
 
     def getActualUser(self):
         print(self.actualUser)
         
     def setKernel(self,kernel):
         self.kernel = kernel
+        
+    def setProgramsID(self,programs):
+        self.programsID = programs
         
     def printProgramsID(self):
         print (self.programsID)
@@ -38,24 +45,20 @@ class Shell:
         newUser = raw_input("New user: ")
         password = raw_input("Enter the new password: ")
         anId = raw_input("Enter an unique ID: ")
-        userDAO = UserDAO()
-        userDAO.addUser(newUser,password,anId)
+        self.dao.addUser(newUser,password,anId)
         
     def changePassword(self):
             oldPassword = raw_input("Enter the old password: ")
-            userDAO = UserDAO()
-            result = userDAO.getField("PASSWORD",self.actualUser)
+            result = self.dao.getField("PASSWORD",self.actualUser)
             if (result[0][0] == oldPassword):
                 print("Correct Password!")
                 newPassword = raw_input("Enter the new password please:")
-                userDAO.refreshField("PASSWORD",self.actualUser,newPassword)
+                result.refreshField("PASSWORD",self.actualUser,newPassword)
             else:
                 raise Exception("User doesn't exist!")
         
     def validate(self,user,password):
-        #PREGUNTAR COMO PUEDO ACCEDER DE MANERA ESTATICA.. (SIN INSTANCIAR)"
-        userDAO = UserDAO()
-        result = userDAO.get(user, password)
+        result = self.dao.get(user, password)
         try:
             if (result[0][0] == user and result[0][1] == password):
                 print("Welcome:  " + str(user))
@@ -64,12 +67,10 @@ class Shell:
     
     
     def help(self):
-        print("Commands are: \n" +str(self.methods.kfeeys()))
+        print("Commands are: \n" +str(self.methods.keys()))
         
     def initialize(self):
-        presentation = open("resource/presentation.txt","r")
-        print(presentation.read())
-        presentation.close()
+        self.logger.readPresentation()
         
     def loggIn(self):
         name = raw_input("Enter user name: ")
@@ -84,94 +85,35 @@ class Shell:
         print(self.kernel.stateOfCpu())
         
     def readLog(self):
-        log = open('resource/log.txt','r')
-        print(log.read())
-        log.close()
+        self.logger.read()
+        
+    def build(self):
+        x = self.factory.create()
+        self.setProgramsID(x[0])
+        self.setKernel(x[1])
         
     def run(self):
         self.initialize()
         pompt = " -> "
         print (pompt + "Please Log in: ")
         self.loggIn()
-        self.programsID = self.build()
+        self.build()
         print ("Programs on disk are:")
         print(self.programsID)
         while (True):
             print(pompt + "What do you wanna do?")
             inputUser = (raw_input(pompt + str(self.actualUser+": ")))
-            value = inputUser.split() 
-            if (value[0] == "execute"):
-                idProgram = raw_input(pompt + "Please enter an ID:")
-                self.execute(idProgram)
-            elif (not self.methods.has_key(value[0])):
-                raise Exception("I don't understand!!")
-            else:
-                method = self.methods[value[0]]
-                method()
-                
-    def build(self):
-        x = []
-        y = []
-        instruction1 = BasicInstruction()
-        instruction2 = IO_Instruction()
-        instruction3 = Priority_Instruction()
-        program = Program('a')
-        program.addInstruction(instruction1)
-        program.addInstruction(instruction1)
-        program.addInstruction(instruction1)
-        program.addInstruction(instruction1)
-        program.addInstruction(instruction1)
-        program.addInstruction(instruction1)
-        program.addInstruction(instruction1)
-        program.addInstruction(instruction1)
-        program.addInstruction(instruction1)
-        program.addInstruction(instruction2)
-        program.addInstruction(instruction1)
-        program.addInstruction(instruction1)
-        program.addInstruction(instruction2)
-        program.addInstruction(instruction1)
-        programb = Program('b')
-        programb.addInstruction(instruction3)
-        programc = Program('c')
-        programc.addInstruction(instruction1)
-        programc.addInstruction(instruction1)
-        programc.addInstruction(instruction1)
-        programc.addInstruction(instruction1)
-        programc.addInstruction(instruction1)
-        programc.addInstruction(instruction1)
-        programd = Program('d')
-        programd.addInstruction(instruction1)
-        programd.addInstruction(instruction1)
-        programe = Program('e')
-        programe.addInstruction(instruction1)
-        programe.addInstruction(instruction1)
-        programe.addInstruction(instruction1)
-        x.append('a')
-        x.append('b')
-        x.append('c')
-        x.append('d')
-        x.append('e')
-        y.append(program)
-        y.append(programb)
-        y.append(programc)
-        y.append(programd)
-        y.append(programe)
-        timer = Timer(2)
-        memory = Memory()
-        memory.buildMemory(20)
-        frame1 = Frame(memory,0,20)
-        mmu = MMU()
-        mmu.addEmptyFrame(frame1)
-        cpu = CPU(None,mmu,None,timer)
-        scheduler = Scheduler(PFIFO())
-        ioqueue = IOQueue(scheduler)
-        disk = Disk(None)
-        kernel = Kernel(cpu,ioqueue,scheduler,mmu,disk)
-        kernel.saveOnDisk(y)
-        self.setKernel(kernel)
-        disk.setKernel(kernel)
-        cpu.setKernel(kernel)
-        return x             
+            if(not inputUser == ''):
+                value = inputUser.split() 
+                if (value[0] == "execute"):
+                    idProgram = raw_input(pompt + "Please enter an ID:")
+                    self.execute(idProgram)
+                elif (not self.methods.has_key(value[0])):
+                    raise Exception("I don't understand!!")
+                else:
+                    method = self.methods[value[0]]
+                    method()
+                            
                 
 def main():
     s = Shell()

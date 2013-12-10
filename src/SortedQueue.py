@@ -1,7 +1,7 @@
 '''
 Created on 29/09/2013
 
-@author: matlock
+@author: matlock,santiago
 '''
 
 
@@ -15,10 +15,15 @@ c_variable = threading.Condition(threading.RLock())
 
 class IOQueue(threading.Thread):
     
-    def __init__(self,scheduler):
+    def __init__(self,scheduler,logger):
         threading.Thread.__init__(self)
         self.queue = Queue()
         self.scheduler = scheduler
+        self.logger = logger
+        
+        
+    def getLogger(self):
+        return self.logger
         
     def isEmpty(self):
         return self.queue.empty()
@@ -34,20 +39,13 @@ class IOQueue(threading.Thread):
         time.sleep(5)
         pcb = self.queue.get()
         pcb.setPC(pcb.getPC() + 1)
-        log = open("resource/log.txt","a")
-        log.write("I/O QUEUE: Executing an I/O Instruction  \n"
+        self.getLogger().write("I/O QUEUE: Executing an I/O Instruction  \n"
                   "I/O QUEUE: "+"'"+pcb.getPid()+"'"+":  ends the I/O instruction  \n") 
-        print ("I/O QUEUE:   Executing an I/O Instruction.. ")
-        print ("I/O QUEUE: "+"'"+pcb.getPid()+"'"+":  ends the I/O instruction ")
-        log.close()
         self.scheduler.add(pcb)
         kernel_semaphore2.release()
         
     def shutDown(self):
-        log = open("resource/log.txt", "a")
-        log.write("I/O QUEUE: Shutdown!!  \n")
-        log.close()
-        print ("I/O QUEUE: Shutdown!! ")
+        self.getLogger().write("I/O QUEUE: Shutdown!!  \n")
         
     def run(self):
         while (True):

@@ -1,7 +1,7 @@
 '''
 Created on 30/09/2013
 
-@author: matlock
+@author: matlock,santiago
 '''
 import threading
 import time 
@@ -12,13 +12,17 @@ kernel_semaphore = threading.Semaphore(1)
     
 class CPU(threading.Thread):
     
-    def __init__(self,kernel,mmu,pcb,timer):
+    def __init__(self,kernel,mmu,pcb,timer,logger):
         threading.Thread.__init__(self)
         self.state = Idle()
         self.kernel = kernel
         self.timer = timer
         self.mmu = mmu
         self.pcb = pcb
+        self.logger = logger
+        
+    def getLogger(self):
+        return self.logger
         
     def setState(self,state):
         self.state=state
@@ -55,34 +59,20 @@ class CPU(threading.Thread):
         self.kernel.sendToIO(self.pcb)
         
     def contextSwitching(self):
-        log = open("resource/log.txt","a")
-        log.write("CPU: Context Switching.. \n")
-        print ("CPU: Context Switching..")
+        self.getLogger().write("CPU: Context Switching.. \n")
         self.changeState()
-        print ("CPU: Cpu is now " ) + "'"+str(self.state.printState())+"'"
-        log.write("CPU: Cpu is now" +"'"+str(self.state.printState())+"' \n")
-        log.close()
+        self.getLogger().write("CPU: Cpu is now" +"'"+str(self.state.printState())+"' \n")
         self.getTimer().reset()
         kernel_semaphore.release()
         
     def executePriorityInstruction(self):
-        log = open("resource/log.txt","a")
-        log.write("CPU: Running a Priority Instruction of the program:   " + str(self.getPCB().getPid())+"\n")
-        log.close()
-        print ("CPU: Running a Priority Instruction of the program:   " + str(self.getPCB().getPid()))
-        
-        
+        self.getLogger().write("CPU: Running a Priority Instruction of the program:   " + str(self.getPCB().getPid())+"\n")
+            
     def executeBasicInstruction(self):
-        log = open("resource/log.txt","a")
-        log.write("CPU: Running a basic instruction of the program:   " + str(self.getPCB().getPid())+"\n")
-        log.close()
-        print ("CPU: Running a basic instruction of the program:   " + str(self.getPCB().getPid()))
+        self.getLogger().write("CPU: Running a basic instruction of the program:   " + str(self.getPCB().getPid())+"\n")
         
     def shutDown(self):
-        log = open("resource/log.txt","a")
-        log.write("CPU: Shutdown!!  \n")
-        log.close()
-        print ("CPU: Shutdown!! ")
+        self.getLogger().write("CPU: Shutdown!!  \n")
     
     def run(self):
         while(True):
@@ -114,10 +104,7 @@ class Idle():
                 break
         if (pc == cpu.getPCB().getSize()):
             cpu.getKernel().delete(identifier)
-            log = open("resource/log.txt","a")
-            log.write("CPU: Program " + str(identifier)+ " completed! \n")
-            log.close()
-            print ("CPU: Program " + str(identifier)+ " completed!")
+            cpu.getLogger().write("CPU: Program " + str(identifier)+ " completed! \n")
         elif(not instruction.isIO()):
             cpu.getKernel().savePCB(cpu.pcb)
         cpu.contextSwitching()

@@ -1,7 +1,7 @@
 '''
 Created on 07/10/2013
 
-@author: matlock
+@author: matlock,santiago
 '''
 
 from src.Program import * 
@@ -23,7 +23,7 @@ class MMU():
         if(not len(self.emptyFrames) == 0):
             return self.emptyFrames[0].getMemory()
         else:
-            self.fullFrames[0].getMemory()
+            return self.fullFrames[0].getMemory()
         
     def load(self,pcb,program):
         try:

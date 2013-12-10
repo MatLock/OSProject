@@ -1,7 +1,7 @@
 '''
 Created on 08/10/2013
 
-@author: matlock
+@author: matlock,santiago
 '''
 
 class Memory():
@@ -28,7 +28,7 @@ class Memory():
         return len(self.blocks)==0
         
     def printMemory(self):
-        for i in range(0,5):
+        for i in range(0,20):
             print (self.blocks[i])
             
     def moveOnePlace(self,base,size):

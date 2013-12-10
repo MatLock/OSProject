@@ -1,7 +1,7 @@
 '''
 Created on 09/12/2013
 
-@author: matlock
+@author: matlock,santiago
 '''
 
 from service.DBConnector import *
@@ -12,7 +12,6 @@ class UserDAO:
         try:
             connection = DBConnector().openConnection()
             cursor = connection.cursor()
-            # query = "SELECT USER_ID,PASSWORD FROM  USER WHERE USER_ID = %s AND PASSWORD = %s"
             cursor.execute("SELECT USER_ID,PASSWORD FROM  USER WHERE USER_ID = %s AND PASSWORD = %s;"
                            ,(user,password))
             return cursor.fetchall()
