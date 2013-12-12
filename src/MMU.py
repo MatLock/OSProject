@@ -13,10 +13,10 @@ conditionMMU = threading.Condition(threading.RLock())
 
 class MMU():
     
-    def __init__(self):
+    def __init__(self,logger):
         self.emptyFrames = []
         self.fullFrames = []
-        #AGREGAR ALGORITMO DE MANEJO DE MEMORIA!!
+        self.logger = logger
         
         
     def getMemory(self):
@@ -24,6 +24,9 @@ class MMU():
             return self.emptyFrames[0].getMemory()
         else:
             return self.fullFrames[0].getMemory()
+        
+    def getLogger(self):
+        return self.logger
         
     def load(self,pcb,program):
         try:
@@ -63,7 +66,7 @@ class MMU():
             frame.delete()
             size = frame.getSize()
             self.fullFrames.remove(frame)
-            print ("MMU: The frame has been emptied")
+            self.getLogger().write("MMU: The frame has been emptied \n")
             self.emptyFrames.append(frame)
             return size
         finally:

@@ -25,9 +25,8 @@ class Shell:
                        "programsID" : self.printProgramsID,
                        "execute '@param<Identifier>'" : None,
                        }
-        self.dao = UserDAO()
         self.logger = Logger("/home/matlock/Escritorio/Sistemas Operativos/OSProyect/resource/log.txt")
-        self.factory = Factory(self.dao,self.logger)
+        self.factory = Factory(self.logger)
 
     def getActualUser(self):
         print(self.actualUser)
@@ -45,11 +44,11 @@ class Shell:
         newUser = raw_input("New user: ")
         password = raw_input("Enter the new password: ")
         anId = raw_input("Enter an unique ID: ")
-        self.dao.addUser(newUser,password,anId)
+        UserDAO().addUser(newUser,password,anId)
         
     def changePassword(self):
             oldPassword = raw_input("Enter the old password: ")
-            result = self.dao.getField("PASSWORD",self.actualUser)
+            result = UserDAO().getField("PASSWORD",self.actualUser)
             if (result[0][0] == oldPassword):
                 print("Correct Password!")
                 newPassword = raw_input("Enter the new password please:")
@@ -58,7 +57,7 @@ class Shell:
                 raise Exception("User doesn't exist!")
         
     def validate(self,user,password):
-        result = self.dao.get(user, password)
+        result = UserDAO().get(user, password)
         try:
             if (result[0][0] == user and result[0][1] == password):
                 print("Welcome:  " + str(user))

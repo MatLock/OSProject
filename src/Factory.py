@@ -11,8 +11,7 @@ import os
 
 class Factory:
     
-    def __init__(self,dao,logger):
-        self.dao = dao
+    def __init__(self,logger):
         self.logger = logger
         
     

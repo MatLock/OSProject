@@ -21,7 +21,9 @@ class Program():
         
     def getInstruction(self):
         return self.instruction
-        
+    
+    def size(self):
+        return len(self.instruction)
     
     def addInstruction(self,anInstruction):
         self.instruction.append(anInstruction)

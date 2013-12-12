@@ -115,9 +115,10 @@ class Kernel(threading.Thread):
             
     def delete(self,pid):
         self.getMMU().delete(pid)
-        size = len(self.getMMU().getMemory().getEmptyCells())
         if (not self.getDisk().isEmpty()):
-            self.getDisk().get(size)
+            size = len(self.getMMU().getMemory().getEmptyCells())
+            program = self.getDisk().get(size)
+            self.saveProgram(program)
             
     def executeProgram(self,anIdentifier):
         program = self.getDisk().getProgram(anIdentifier)
@@ -129,7 +130,7 @@ class Kernel(threading.Thread):
     
         
             
-def main1():
+def main0():
     instruction1 = BasicInstruction()
     instruction2 = IO_Instruction()
     instruction3 = Priority_Instruction()
@@ -163,7 +164,7 @@ def main1():
     cpu.start()
     ioqueue.start()
     
-def main4():
+def main():
     instruction1 = BasicInstruction()
     instruction2 = IO_Instruction()
     instruction3 = Priority_Instruction()
@@ -185,13 +186,14 @@ def main4():
     memory = Memory()
     memory.buildMemory(9)
     frame1 = Frame(memory,0,9)
-    mmu = MMU()
+    logger = Logger("/home/matlock/Escritorio/Sistemas Operativos/OSProyect/resource/log.txt")
+    mmu = MMU(logger)
     mmu.addEmptyFrame(frame1)
-    cpu = CPU(None,mmu,None,timer)
+    cpu = CPU(None,mmu,None,timer,logger)
     scheduler = Scheduler(PFIFO())
-    ioqueue = IOQueue(scheduler)
+    ioqueue = IOQueue(scheduler,logger)
     disk = Disk(None)
-    kernel = Kernel(cpu,ioqueue,scheduler,mmu,disk)
+    kernel = Kernel(cpu,ioqueue,scheduler,mmu,disk,logger)
     disk.setKernel(kernel)
     cpu.setKernel(kernel)
     kernel.saveProgram(program)
@@ -273,7 +275,7 @@ def main2():
         memory.printMemory()
         
         
-def main():
+def main1():
     instruction1 = BasicInstruction()
     instruction3 = Priority_Instruction()
     logger = Logger("../resource/log.txt")
