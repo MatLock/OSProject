@@ -1,7 +1,7 @@
 '''
 Created on 07/10/2013
 
-@author: matlock
+@author: matlock,santiago
 '''
 
 class Program():
@@ -21,7 +21,9 @@ class Program():
         
     def getInstruction(self):
         return self.instruction
-        
+    
+    def size(self):
+        return len(self.instruction)
     
     def addInstruction(self,anInstruction):
         self.instruction.append(anInstruction)

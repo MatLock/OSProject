@@ -18,7 +18,8 @@ class TestCPU(unittest.TestCase):
         self.mmu = mock()
         self.pcb = mock()
         self.timer = mock()
-        self.cpu=CPU(self.kernel,self.mmu,self.pcb,self.timer)
+        self.logger = mock()
+        self.cpu=CPU(self.kernel,self.mmu,self.pcb,self.timer,self.logger)
         self.cpu.setState(self.state)
     
         

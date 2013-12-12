@@ -28,7 +28,8 @@ class testKernel(unittest.TestCase):
         self.frame2 = Frame(self.memory,1,2)
         self.frame3 = Frame(self.memory,3,1)
         self.frame4 = Frame(self.memory,4,1)
-        self.mmu = MMU()
+        self.logger = Logger("/home/matlock/Escritorio/Sistemas Operativos/OSProyect/resource/log.txt")
+        self.mmu = MMU(self.logger)
         self.mmu.fullFrames.append(self.frame1)
         self.mmu.fullFrames.append(self.frame3)
         self.mmu.emptyFrames.append(self.frame2)
@@ -51,7 +52,7 @@ class testKernel(unittest.TestCase):
         self.programd.addInstruction(self.instruction2)
         self.scheduler = Scheduler(PFIFO())
         self.disk = mock()
-        self.kernel = Kernel (None,None,self.scheduler,self.mmu,self.disk)
+        self.kernel = Kernel (None,None,self.scheduler,self.mmu,self.disk,self.logger)
         
         
         

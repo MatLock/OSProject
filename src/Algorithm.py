@@ -1,11 +1,11 @@
 '''
 Created on 23/09/2013
 
-@author: matlock
+@author: matlock,santiago
 '''
 
 
-from SortedQueue import SortedQueue
+from src.SortedQueue import SortedQueue
 from Queue import Queue
 
 

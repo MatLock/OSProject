@@ -1,11 +1,12 @@
 '''
 Created on 07/10/2013
 
-@author: matlock
+@author: matlock,santiago
 '''
 
 
 from src.Timer import Timer
+from src.Logger import *
 from src.Frame import Frame
 from src.CPU  import *
 from src.SortedQueue import *
@@ -22,16 +23,20 @@ from src.Algorithm  import PFIFO
 
 class Kernel(threading.Thread):
     
-    def __init__(self,cpu,ioqueue,scheduler,mmu,disk):
+    def __init__(self,cpu,ioqueue,scheduler,mmu,disk,logger):
         threading.Thread.__init__(self)
         self.cpu = cpu
         self.ioqueue = ioqueue
         self.scheduler = scheduler
         self.mmu = mmu
         self.disk = disk
+        self.logger = logger
         
     def getDisk(self):
         return self.disk
+    
+    def getLogger(self):
+        return self.logger
         
     def getMMU(self):
         return self.mmu
@@ -46,10 +51,7 @@ class Kernel(threading.Thread):
         return self.scheduler
     
     def shutDown(self):
-        log = open("../resource/log.txt","a")
-        log.write("KERNEL: ShutDown! \n")
-        log.close()
-        print ("KERNEL: ShutDown!")
+        self.getLogger().write("KERNEL: ShutDown! \n")
         
     def containsPriorityInstruction(self,program): 
         y = filter(lambda x : isinstance(x,Priority_Instruction),program.getInstruction())
@@ -65,17 +67,17 @@ class Kernel(threading.Thread):
         try:
             pid = program.getName()
             priority = self.addPriority(program)
-            size = len(program.instruction)
+            size = program.size()
             base = self.mmu.getBase(size)
             pcb = PCB(pid,priority,base,size)
-            self.mmu.load(pcb,program)
+            self.mmu.load(pcb,program,base)
             self.scheduler.add(pcb)
         except (Exception):
             try:
                 self.mmu.compact()
                 base = self.mmu.getBase(size)
                 pcb = PCB(pid,priority,base,size)
-                self.mmu.load(pcb,program)
+                self.mmu.load(pcb,program,base)
                 self.scheduler.add(pcb)
             except (Exception):
                 self.getDisk().save(program)
@@ -86,10 +88,7 @@ class Kernel(threading.Thread):
         
         
     def sendToIO(self,pcb):
-        log = open("../resource/log.txt","a")
-        log.write("KERNEL: Sending program" +str(pcb.getPid())+ "to IOQueue!! \n")
-        log.close()
-        print ("KERNEL:  Sending program " + str(pcb.getPid())+ " to IOQueue !!")
+        self.getLogger().write("KERNEL: Sending program" +str(pcb.getPid())+ "to IOQueue!! \n")
         self.getIOqueue().put(pcb)
         io_semaphore.release()
         
@@ -115,9 +114,11 @@ class Kernel(threading.Thread):
         return self.getCPU().printState()
             
     def delete(self,pid):
-        size = len(self.getMMU().getMemory().getEmptyCells())
+        self.getMMU().delete(pid)
         if (not self.getDisk().isEmpty()):
-            self.getDisk().get(size)
+            size = len(self.getMMU().getMemory().getEmptyCells())
+            program = self.getDisk().get(size)
+            self.saveProgram(program)
             
     def executeProgram(self,anIdentifier):
         program = self.getDisk().getProgram(anIdentifier)
@@ -126,10 +127,30 @@ class Kernel(threading.Thread):
         self.getCPU().start()
         self.getIOqueue().start()
         
+    def candidates(self):
+        size = len(self.getMMU().getMemory().getEmptyCells())
+        programs = self.getDisk().programList
+        current = 0
+        result = []
+        for i in range(0,len(programs)):
+            if (programs[i].size() + current <= size):
+                result.append(i)
+                current += programs[i].size()
+        return result
+    
+    def executeAll(self):
+        candidates = self.candidates()
+        candidates.reverse()
+        for i in range(0,len(candidates)):
+            self.saveProgram(self.getDisk().programList.pop(i))    
+        self.start()
+        self.getCPU().start()
+        self.getIOqueue().start()
+        
     
         
             
-def main1():
+def main0():
     instruction1 = BasicInstruction()
     instruction2 = IO_Instruction()
     instruction3 = Priority_Instruction()
@@ -163,7 +184,7 @@ def main1():
     cpu.start()
     ioqueue.start()
     
-def main4():
+def main():
     instruction1 = BasicInstruction()
     instruction2 = IO_Instruction()
     instruction3 = Priority_Instruction()
@@ -171,7 +192,11 @@ def main4():
     program.addInstruction(instruction1)
     program.addInstruction(instruction1)
     program.addInstruction(instruction1)
+    program.addInstruction(instruction1)
+    program.addInstruction(instruction1)
     programd = Program('d')
+    programd.addInstruction(instruction1)
+    programd.addInstruction(instruction1)
     programd.addInstruction(instruction1)
     programd.addInstruction(instruction1)
     programd.addInstruction(instruction1)
@@ -185,20 +210,23 @@ def main4():
     memory = Memory()
     memory.buildMemory(9)
     frame1 = Frame(memory,0,9)
-    mmu = MMU()
+    logger = Logger("/home/matlock/Escritorio/Sistemas Operativos/OSProyect/resource/log.txt")
+    mmu = MMU(logger)
     mmu.addEmptyFrame(frame1)
-    cpu = CPU(None,mmu,None,timer)
+    cpu = CPU(None,mmu,None,timer,logger)
     scheduler = Scheduler(PFIFO())
-    ioqueue = IOQueue(scheduler)
+    ioqueue = IOQueue(scheduler,logger)
     disk = Disk(None)
-    kernel = Kernel(cpu,ioqueue,scheduler,mmu,disk)
+    kernel = Kernel(cpu,ioqueue,scheduler,mmu,disk,logger)
     disk.setKernel(kernel)
     cpu.setKernel(kernel)
-    kernel.saveProgram(program)
-    kernel.saveProgram(programb)
-    kernel.saveProgram(programc)
-    kernel.saveProgram(programd)
-    print(len(disk.programList))
+    x = []
+    x.append(program)
+    x.append(programb)
+    x.append(programc)
+    x.append(programd)
+    kernel.saveOnDisk(x)
+    kernel.executeProgram('a')
     
 def main3():
     if(1==1):
@@ -273,10 +301,14 @@ def main2():
         memory.printMemory()
         
         
-def main():
+def main1():
     instruction1 = BasicInstruction()
     instruction3 = Priority_Instruction()
+    logger = Logger("../resource/log.txt")
     program = Program('a')
+    program.addInstruction(instruction1)
+    program.addInstruction(instruction1)
+    program.addInstruction(instruction1)
     program.addInstruction(instruction1)
     program.addInstruction(instruction1)
     program.addInstruction(instruction1)
@@ -292,11 +324,11 @@ def main():
     frame1 = Frame(memory,0,9)
     mmu = MMU()
     mmu.addEmptyFrame(frame1)
-    cpu = CPU(None,mmu,None,timer)
+    cpu = CPU(None,mmu,None,timer,logger)
     scheduler = Scheduler(PFIFO())
-    ioqueue = IOQueue(scheduler)
+    ioqueue = IOQueue(scheduler,logger)
     disk = Disk(None)
-    kernel = Kernel(cpu,ioqueue,scheduler,mmu,disk)
+    kernel = Kernel(cpu,ioqueue,scheduler,mmu,disk,logger)
     disk.setKernel(kernel)
     disk.save(program)
     disk.save(programb)

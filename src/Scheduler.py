@@ -1,7 +1,7 @@
 '''
 Created on 07/10/2013
 
-@author: matlock
+@author: matlock,santiago
 '''
 
 class Scheduler():

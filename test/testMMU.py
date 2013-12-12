@@ -10,6 +10,7 @@ from src.MMU import *
 from src.Instruction import *
 from src.Program import *
 from src.PCB import *
+from src.Logger import *
 
 
 import unittest 
@@ -24,7 +25,8 @@ class testMMU(unittest.TestCase):
         self.frame2 = Frame(self.memory,1,2)
         self.frame3 = Frame(self.memory,3,1)
         self.frame4 = Frame(self.memory,4,1)
-        self.mmu = MMU()
+        self.logger = Logger("/home/matlock/Escritorio/Sistemas Operativos/OSProyect/resource/log.txt")
+        self.mmu = MMU(self.logger)
         self.mmu.fullFrames.append(self.frame1)
         self.mmu.fullFrames.append(self.frame3)
         self.mmu.emptyFrames.append(self.frame2)
@@ -46,7 +48,8 @@ class testMMU(unittest.TestCase):
     def testCompact(self):
         self.memory.printMemory()
         self.mmu.compact()
-        self.mmu.load(self.pcbC,self.programc)
+        base = self.mmu.emptyFrames[0].getBase()
+        self.mmu.load(self.pcbC,self.programc,base)
         for i in range(0,5):
             instruction = self.memory.blocks[i]
             self.assertIsInstance(instruction, BasicInstruction, "Compact test")

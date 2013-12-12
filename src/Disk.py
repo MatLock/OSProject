@@ -1,7 +1,7 @@
 '''
 Created on 23/11/2013
 
-@author: matlock
+@author: matlock,santiago
 '''
 
 class Disk():
@@ -29,8 +29,11 @@ class Disk():
                 return self.programList.pop(i)
         raise Exception ("Identifier does not exist!")
         
-    def get(self,size):
+    def getTarget(self,size):
         for i in range(0,len(self.programList)):
-            if (len(self.programList[i].getInstruction()) <= size):
-                self.getKernel().saveProgram(self.programList.pop(i))
-                return 0
+            if(self.programList[i].size() <= size):
+                return i 
+            
+    def get(self,size):
+        target = self.getTarget(size)
+        return self.programList.pop(target)
