@@ -37,6 +37,8 @@ class Factory:
         program.addInstruction(instruction1)
         program.addInstruction(instruction1)
         program.addInstruction(instruction1)
+        program.addInstruction(instruction1)
+        program.addInstruction(instruction1)
         programd = Program('d')
         programd.addInstruction(instruction1)
         programd.addInstruction(instruction1)

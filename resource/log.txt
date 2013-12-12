@@ -1,0 +1,43 @@
+CPU: Running a basic instruction of the program:   a
+CPU: Running a basic instruction of the program:   a
+CPU: Context Switching.. 
+CPU: Cpu is now'Idle' 
+CPU: Running a basic instruction of the program:   a
+CPU: Running a basic instruction of the program:   a
+CPU: Context Switching.. 
+CPU: Cpu is now'Idle' 
+CPU: Running a basic instruction of the program:   a
+MMU: The frame has been emptied 
+CPU: Program a completed! 
+CPU: Context Switching.. 
+CPU: Cpu is now'Idle' 
+CPU: Running a Priority Instruction of the program:   b
+MMU: The frame has been emptied 
+CPU: Program b completed! 
+CPU: Context Switching.. 
+CPU: Cpu is now'Idle' 
+CPU: Running a basic instruction of the program:   c
+CPU: Running a basic instruction of the program:   c
+CPU: Context Switching.. 
+CPU: Cpu is now'Idle' 
+CPU: Running a basic instruction of the program:   c
+MMU: The frame has been emptied 
+CPU: Program c completed! 
+CPU: Context Switching.. 
+CPU: Cpu is now'Idle' 
+CPU: Running a basic instruction of the program:   d
+CPU: Running a basic instruction of the program:   d
+CPU: Context Switching.. 
+CPU: Cpu is now'Idle' 
+CPU: Running a basic instruction of the program:   d
+CPU: Running a basic instruction of the program:   d
+CPU: Context Switching.. 
+CPU: Cpu is now'Idle' 
+CPU: Running a basic instruction of the program:   d
+MMU: The frame has been emptied 
+CPU: Program d completed! 
+CPU: Context Switching.. 
+CPU: Cpu is now'Idle' 
+CPU: Shutdown!!  
+I/O QUEUE: Shutdown!!  
+KERNEL: ShutDown! 
