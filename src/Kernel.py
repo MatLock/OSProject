@@ -67,10 +67,10 @@ class Kernel(threading.Thread):
         try:
             pid = program.getName()
             priority = self.addPriority(program)
-            size = len(program.instruction)
+            size = program.size()
             base = self.mmu.getBase(size)
             pcb = PCB(pid,priority,base,size)
-            self.mmu.load(pcb,program)
+            self.mmu.load(pcb,program,base)
             self.scheduler.add(pcb)
         except (Exception):
             try:
@@ -123,6 +123,26 @@ class Kernel(threading.Thread):
     def executeProgram(self,anIdentifier):
         program = self.getDisk().getProgram(anIdentifier)
         self.saveProgram(program)
+        self.start()
+        self.getCPU().start()
+        self.getIOqueue().start()
+        
+    def candidates(self):
+        size = len(self.getMMU().getMemory().getEmptyCells())
+        programs = self.getDisk().programList
+        current = 0
+        result = []
+        for i in range(0,len(programs)):
+            if (programs[i].size() + current <= size):
+                result.append(i)
+                current += programs[i].size()
+        return result
+    
+    def executeAll(self):
+        candidates = self.candidates()
+        candidates.reverse()
+        for i in candidates:
+            self.saveProgram(self.getDisk().programList.pop(i))    
         self.start()
         self.getCPU().start()
         self.getIOqueue().start()
@@ -196,11 +216,14 @@ def main():
     kernel = Kernel(cpu,ioqueue,scheduler,mmu,disk,logger)
     disk.setKernel(kernel)
     cpu.setKernel(kernel)
-    kernel.saveProgram(program)
-    kernel.saveProgram(programb)
-    kernel.saveProgram(programc)
-    kernel.saveProgram(programd)
+    x = []
+    x.append(program)
+    x.append(programb)
+    x.append(programc)
+    x.append(programd)
+    kernel.saveOnDisk(x)
     print(len(disk.programList))
+    kernel.executeProgram('a')
     
 def main3():
     if(1==1):

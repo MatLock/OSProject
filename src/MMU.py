@@ -28,15 +28,15 @@ class MMU():
     def getLogger(self):
         return self.logger
         
-    def load(self,pcb,program):
+    def load(self,pcb,program,base):
         try:
             conditionMMU.acquire()
-            frame = self.selectEmptyFrame(pcb.getSize())
+            frame = self.selectEmptyFrame(base)
             if(frame.getSize() > pcb.getSize()):
                 result = frame.splitFrame(pcb.getSize())
                 result.load(pcb,program)
                 self.fullFrames.append(result)
-                self.addEmptyFrame(frame)
+                self.emptyFrames.append(frame)
             else:
                 frame.load(pcb,program)
                 self.fullFrames.append(frame) 
@@ -64,11 +64,9 @@ class MMU():
             conditionMMU.acquire()
             frame = self.getFrame(pid)
             frame.delete()
-            size = frame.getSize()
             self.fullFrames.remove(frame)
             self.getLogger().write("MMU: The frame has been emptied \n")
             self.emptyFrames.append(frame)
-            return size
         finally:
             conditionMMU.release()
             
@@ -107,26 +105,24 @@ class MMU():
         finally: 
             conditionMMU.release()
             
-    def selectEmptyFrame(self,size):
+    def getIndexByBase(self,base):
+        for i in range(0,(len(self.emptyFrames))):
+            if (self.emptyFrames[i].getBase() == base):
+                return i
+            
+    def selectEmptyFrame(self,base):
         try:
             conditionMMU.acquire()
-            i = 0
-            while (i < len(self.emptyFrames)):
-                x = self.emptyFrames[i]
-                if (x.getSize() >= size):
-                    return self.emptyFrames.pop(i)
-                raise Exception ("There isn't any frame to allocate the program!")
+            return self.emptyFrames.pop(self.getIndexByBase(base))
         finally:
             conditionMMU.release()
     
     def getBase(self,size):
         try:
             conditionMMU.acquire()
-            i = 0
-            while(len(self.emptyFrames) > i):
-                if(self.emptyFrames[i].getSize() >= i):
+            for i in range(0,(len(self.emptyFrames))):
+                if(self.emptyFrames[i].getSize() >= size):
                     return self.emptyFrames[i].getBase()
-                i += 1
             raise Exception ("There isn't any frame to allocate the program!")
         finally:
             conditionMMU.release()

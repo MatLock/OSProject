@@ -31,7 +31,7 @@ class Disk():
         
     def getTarget(self,size):
         for i in range(0,len(self.programList)):
-            if(self.programList[i] <= size):
+            if(self.programList[i].size() <= size):
                 return i 
             
     def get(self,size):

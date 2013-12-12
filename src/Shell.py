@@ -24,6 +24,7 @@ class Shell:
                        "actualUser" : self.getActualUser,
                        "programsID" : self.printProgramsID,
                        "execute '@param<Identifier>'" : None,
+                       "executeAll" : self.executeAll
                        }
         self.logger = Logger("/home/matlock/Escritorio/Sistemas Operativos/OSProyect/resource/log.txt")
         self.factory = Factory(self.logger)
@@ -42,6 +43,7 @@ class Shell:
         
     def addUser(self):
         newUser = raw_input("New user: ")
+        
         password = raw_input("Enter the new password: ")
         anId = raw_input("Enter an unique ID: ")
         UserDAO().addUser(newUser,password,anId)
@@ -90,6 +92,9 @@ class Shell:
         x = self.factory.create()
         self.setProgramsID(x[0])
         self.setKernel(x[1])
+        
+    def executeAll(self):
+        self.kernel.executeAll()
         
     def run(self):
         self.initialize()
