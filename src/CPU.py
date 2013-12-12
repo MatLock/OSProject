@@ -98,7 +98,7 @@ class Idle():
                 cpu.getTimer().increaseActualValue()
                 cpu.getPCB().setPC(pc)
                 instruction.execute(cpu)
-                time.sleep(0)
+                time.sleep(2)
             else:
                 instruction.execute(cpu)
                 break

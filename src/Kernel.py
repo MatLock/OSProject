@@ -88,7 +88,7 @@ class Kernel(threading.Thread):
         
         
     def sendToIO(self,pcb):
-        self.getLogger().write("KERNEL: Sending program" +str(pcb.getPid())+ "to IOQueue!! \n")
+        self.getLogger().write("KERNEL: Sending program  " +str(pcb.getPid())+ "  to IOQueue!! \n")
         self.getIOqueue().put(pcb)
         io_semaphore.release()
         
@@ -115,8 +115,8 @@ class Kernel(threading.Thread):
             
     def delete(self,pid):
         self.getMMU().delete(pid)
-        if (not self.getDisk().isEmpty()):
-            size = len(self.getMMU().getMemory().getEmptyCells())
+        size = len(self.getMMU().getMemory().getEmptyCells())
+        if ((not self.getDisk().isEmpty()) and self.getDisk().existProgramWithSizeMinorTo(size)):
             program = self.getDisk().get(size)
             self.saveProgram(program)
             

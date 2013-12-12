@@ -28,6 +28,12 @@ class Disk():
             if (self.programList[i].getName() == anIdentifier):
                 return self.programList.pop(i)
         raise Exception ("Identifier does not exist!")
+    
+    def existProgramWithSizeMinorTo(self,size):
+        for i in range(0,len(self.programList)):
+            if (self.programList[i].size() <= size):
+                return True
+        return False
         
     def getTarget(self,size):
         for i in range(0,len(self.programList)):

@@ -40,7 +40,7 @@ class IOQueue(threading.Thread):
         pcb = self.queue.get()
         pcb.setPC(pcb.getPC() + 1)
         self.getLogger().write("I/O QUEUE: Executing an I/O Instruction  \n"
-                  "I/O QUEUE: "+"'"+pcb.getPid()+"'"+":  ends the I/O instruction  \n") 
+                  "I/O QUEUE: "+"'"+pcb.getPid()+"'"+"  ends the I/O instruction  \n") 
         self.scheduler.add(pcb)
         kernel_semaphore2.release()
         
